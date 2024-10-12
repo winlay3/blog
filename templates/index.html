@@ -1,0 +1,29 @@
+{% extends "layout/base.html" %}
+{% block title %}Home Page {% endblock %}
+{% block content %}
+    
+    <div class="container mt-5" style="max-width: 1000px;">
+        
+        {% for article in articles %}
+        <div class="row mb-2">
+            <div class="col-md-12">
+              <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col-auto d-none d-lg-block">
+                    <img width="250" height="250" src="/media/{{article.image}}" alt="{{article.image}}">
+          
+                  </div>
+                <div class="col p-4 d-flex flex-column position-static">
+                  <strong class="d-inline-block mb-2 text-primary">{{article.title}}</strong>
+                  <h3 class="mb-0">{{article.category}}</h3>
+                  <div class="mb-1 text-muted">Nov 12</div>
+                  <p class="card-text mb-auto">{{article.content|safe}}</p>
+                  <a href="#" class="stretched-link">Continue reading</a>
+                </div>
+                
+              </div>
+            </div>
+            
+          </div>
+        {% endfor %}
+    </div>
+{% endblock %}
