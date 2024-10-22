@@ -9,15 +9,16 @@
             <div class="col-md-12">
               <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col-auto d-none d-lg-block">
-                    <img width="250" height="250" src="/media/{{article.image}}" alt="{{article.image}}">
+                    <img width="290" height="290" src="/media/{{article.image}}" alt="{{article.image}}">
           
                   </div>
                 <div class="col p-4 d-flex flex-column position-static">
-                  <strong class="d-inline-block mb-2 text-primary">{{article.title}}</strong>
+                  <strong class="d-inline-block mb-2 text-secondary">{{article.title}} by <i class="text-dark">{{article.author}}</i></strong>
                   <h3 class="mb-0">{{article.category}}</h3>
-                  <div class="mb-1 text-muted">Nov 12</div>
-                  <p class="card-text mb-auto">{{article.content|safe}}</p>
-                  <a href="#" class="stretched-link">Continue reading</a>
+                  <div class="mb-3 text-muted">Nov 12</div>
+                  <p class="card-text mb-auto">{{article.content|slice:"450"|safe}}</p>
+                  <span class="text-dark text-decoration-none">...</span>
+                  <a href="{% url 'article' article.id %}" class="d-block mt-3 text-decoration-none fs-3 stretched-link"style="color: #7a28ff;">Read this article</a>
                 </div>
                 
               </div>

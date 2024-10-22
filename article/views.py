@@ -1,13 +1,45 @@
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.db import IntegrityError
-from . models import Author,Article
+from django.contrib import messages
+from . models import Author,Article,ArticleForm
 # Create your views here.
 def index(request):
+    
     articles = Article.objects.all()
     return render(request, "index.html", {
         'articles': articles
     })
+def article(request, id):
+
+    article = get_object_or_404(Article,pk=id)
+    is_owner = False
+    if article.author.id == request.user.id:
+        is_owner=True
+    return render (request,"article.html", {
+        "article": article,
+        "is_owner": is_owner
+    })
+def create_article(request):
+    if request.method == "POST":
+        form = ArticleForm(request.POST,request.FILES)
+        if form.is_valid():
+            
+            article = form.save(commit=False)
+            article.author_id = request.user.id
+            article.save()
+            messages.success(request,"Post Created")
+            return redirect("home")
+            
+    else:
+        form = ArticleForm()
+    return render(request, "create_article.html",{
+        "form": form
+    })
+
+
+
+
 
 def signup(request):
     if request.method == "POST":

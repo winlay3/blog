@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
+from django.forms import ModelForm
 # Create your models here.
 class Author(AbstractUser):
     def __str__(self):
@@ -21,3 +22,8 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,related_name="article")
     def __str__(self):
         return f'{self.title} (Author - {self.author})'
+    
+class ArticleForm(ModelForm):
+    class Meta:
+        model = Article
+        fields = ['image','title','content','category']
