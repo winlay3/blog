@@ -1,0 +1,52 @@
+{% extends "layout/base.html" %}
+{% load crispy_forms_tags %}
+{% block ExtraCss %}
+    <style>
+        label{
+            display: block;
+        }
+    </style>
+{% endblock %}
+{% block title %}Edit Article {% endblock %}
+{% block content %}
+    
+    <div class="container" style="max-width: 1000px;">
+        <div class="mt-5">
+            <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
+                <h1 class="fs-2 fw-bold pt-3 pb-3">Edit Article</h1>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">DELETE</button>
+            </div>
+            
+            <form method="post" novalidate enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.media}}
+                {{form|crispy}}
+                <input type="submit" value="Edit" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+    <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="confirmModalLabel">Confirm Delete</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <form id="remove_it" class="d-none" action="{% url 'remove_article' post_id %}" method="post">
+            {% csrf_token %}
+          </form>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-danger" onclick="document.querySelector('#remove_it').submit();">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "layout/base.html" %}
+{% block title %}Dashboard {% endblock %}
+{% block content %}
+    
+    <div class="container mt-5" style="max-width: 1000px;">
+        <div class="mt-3 mb-5">
+            <div class="d-flex align-items-center justify-content-between p-3" style="background: rgb(211, 211, 211);">
+                <h5>Blog</h5>
+                <a class="btn btn-secondary" href="{% url 'create_article' %}">Create</a>
+            </div>
+            <div class="shadow " style="padding: 2em 1em;">
+                <h4>Created {{total_article}} articles so far, {{total_publish}} published</h4>
+            </div>
+        </div>
+        <div id="extra_info_msg"></div>
+        <h4 class="text-secondary border-bottom pb-3">dashboard</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Published</th>
+                    <th colspan="2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                <tr>
+                    <td>{{article.title}}</td>
+                    <td>{{article.author}}</td>
+                    <td>{{article.category}}</td>
+                    <td>{{article.is_publish}}</td>
+                    <td><a href="{% url 'edit_article' article.id %}" class="btn btn-sm btn-secondary">Manage</a></td>
+                    <td>
+                        {% if article.is_publish %}
+                        <a req-url = "{% url 'handle_publishing' %}" post-id="{{article.id}}" onclick="handle_publishing(this)" class="btn btn-sm btn-warning">Unpublished</a>
+                        {% else %}
+                            <a req-url = "{% url 'handle_publishing' %}" post-id="{{article.id}}" onclick="handle_publishing(this)" class="btn btn-sm btn-success">Publish</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No blog post yet!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        const csrf_token = "{{ csrf_token }}";
+        function handle_publishing(e) {
+            const post_id = e.getAttribute('post-id');
+            const req_url = e.getAttribute('req-url');
+            fetch(req_url, {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrf_token},
+                mode: 'same-origin',
+                body: JSON.stringify({
+                    id: post_id
+                    })
+                })
+                .then(response => response.json()
+                .then(data => ({ status: response.status, data: data})))
+                .then(obj => {
+                    if (obj.status == 200 ) {
+                        const alert_msg = `<div class="alert
+                          alert-success alert-dismissible fade show" role="alert">
+                          <h6>${obj.data.msg}</h6>
+                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                           </div>`;
+                           document.querySelector("#extra_info_msg").innerHTML = alert_msg;
+                           e.textContent = obj.data.operation;
+                           if(obj.data.operation === 'Unpublished') {
+                            e.textContent = 'Publish';
+                            e.setAttribute('class', 'btn btn-sm btn-success');
+                           }
+                           else {
+                            e.textContent = 'Unpublished';
+                            e.setAttribute('class', 'btn btn-sm btn-warning');
+                           }
+                           console.log(e);
+
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                
+                });
+        }
+    </script>
+{% endblock %}

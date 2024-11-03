@@ -25,6 +25,12 @@
             </div>
             
           </div>
+        {% empty %}
+        <div class="row">
+          <div class="text-center text-secondary">
+            <h4>No Post</h4>
+          </div>
+        </div>
         {% endfor %}
     </div>
 {% endblock %}
