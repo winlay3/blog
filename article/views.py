@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect,get_object_or_404
 from django.db import IntegrityError
 from django.contrib import messages
@@ -22,6 +23,7 @@ def article(request, id):
         "article": article,
         "is_owner": is_owner
     })
+@login_required
 def dashboard(request):
     articles = request.user.article.all()
     total_article = len(articles)
@@ -32,7 +34,7 @@ def dashboard(request):
         "total_article": total_article,
         "total_publish": total_publish
     })
-
+@login_required
 def handle_publishing(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST only route."}, status=400)
@@ -52,6 +54,7 @@ def handle_publishing(request):
     },status=200)
     return HttpResponse(request)
 
+@login_required
 def create_article(request):
     if request.method == "POST":
         form = ArticleForm(request.POST,request.FILES)
@@ -68,6 +71,7 @@ def create_article(request):
     return render(request, "create_article.html",{
         "form": form
     })
+@login_required
 def edit_article(request,id):
     article = get_object_or_404(Article,pk=id)
 
@@ -90,11 +94,18 @@ def edit_article(request,id):
             'form' : form,
             'post_id': article.id
         })
-
+@login_required
 def remove_article(request,id):
-    print(id)
-    return redirect('dashboard')
+    article = get_object_or_404(Article,pk=id)
 
+    if article.author.id != request.user.id:
+        return render (request,'error.html')
+    else:
+        if request.method == "POST":
+            article.delete()
+            messages.success(request,"Post Deleted!")
+            return redirect('dashboard')
+        
 
 def signup(request):
     if request.method == "POST":
